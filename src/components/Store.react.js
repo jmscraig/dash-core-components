@@ -112,8 +112,16 @@ class WebStore {
     }
 }
 
-const _localStore = new WebStore(window.localStorage);
-const _sessionStore = new WebStore(window.sessionStorage);
+function localStorageTest() {
+    let test = 'test';
+    try {
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
 
 /**
  * Easily keep data on the client side with this component.
@@ -125,11 +133,11 @@ export default class Store extends React.Component {
     constructor(props) {
         super(props);
 
-        if (props.storage_type === 'local') {
-            this._backstore = _localStore;
+        if (props.storage_type === 'local' && localStorageTest()) {
+            this._backstore = new WebStore(window.localStorage);
         } else if (props.storage_type === 'session') {
-            this._backstore = _sessionStore;
-        } else if (props.storage_type === 'memory') {
+            this._backstore = new WebStore(window.sessionStorage);
+        } else {
             this._backstore = new MemStore();
         }
 
